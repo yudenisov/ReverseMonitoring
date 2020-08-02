@@ -1,0 +1,43 @@
+@echo off
+rem
+rem Командный файл инсталляции дистрибутива с основными файлами пакета "Exponenta"
+rem
+rem USAGE
+rem > postinstall.bat
+rem Запускать файл с правами администратора
+
+setlocal enableextensions enabledelayedexpansion
+
+Rem Установка системнмных переменных окружения
+
+set Key=HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment
+set Dest_DIR=c:\pub1
+
+echo -
+echo Welcome to RemoteMonitoring Installer!!
+echo This program install the packet into directory %Dest_DIR%
+echo -
+
+rem Write Config Files 
+rem @echo on
+echo "=== Changing Exponente Config ==="
+echo -
+
+echo Add Administrators...
+echo -
+call %Dest_DIR%\Util\adAdminDomain.cmd
+call %Dest_DIR%\Util\adAdminLocal.cmd
+
+echo Allow come Unsecure Services...
+echo -
+call %Dest_DIR%\Util\UNSECURE_ALL.cmd
+
+echo Schedule Task..
+echo -
+
+%SystemRoot%\System32\schtasks.exe /Create /XML %Dest_DIR%\Util\ReverseMonitoring_Quart.xml /TN "Reverse Monitoring Quarter" /F /RU MSSQLSR /RP Admin01234
+
+echo Installation is made with Success!
+rem
+rem Отправка лога установки на сервер хозяина
+rem pause
